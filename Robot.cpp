@@ -8,6 +8,11 @@ private:
 	{
 		RobotDrive *theDrive;
 		Joystick *left, *right;
+		CANTalon *rearLeft, *frontLeft, *rearRight, *frontRight;
+		frontLeft = CANTalon(2);
+		frontRight = CANTalon(1);
+		backLeft = CANTalon(3);
+		backRight = CANTalon(4);
 	}
 
 
@@ -24,17 +29,16 @@ private:
 
 	void TeleopInit()
 	{
-		theDrive = new RobotDrive(0,1,2,3);
+		theDrive = new RobotDrive(frontRight, frontLeft, backLeft, backRight);
 		left = new Joystick(1);
 		right = new Joystick(2);
 	}
 
 	void TeleopPeriodic()
 	{
-		while(isOperatorControl() && isEnabled())
-		{
-			theDrive->Tank(left,right);
-		}
+	
+		theDrive->Tank(left,right);
+		
 	}
 
 	void TestPeriodic()
