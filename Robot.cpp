@@ -37,7 +37,7 @@ private:
 	void TeleopPeriodic()
 	{
 	
-		theDrive->Tank(left,right);
+		theDrive->TankDrive(left,right);
 		
 	}
 
