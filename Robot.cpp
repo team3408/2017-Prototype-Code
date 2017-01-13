@@ -7,7 +7,7 @@ private:
 	void RobotInit()
 	{
 		RobotDrive *theDrive;
-		Joystick *left, *right;
+		Joystick *leftDriverStick, *rightDriverStick;
 		CANTalon *rearLeft, *frontLeft, *rearRight, *frontRight;
 		frontLeft = CANTalon(2);
 		frontRight = CANTalon(1);
@@ -30,14 +30,14 @@ private:
 	void TeleopInit()
 	{
 		theDrive = new RobotDrive(frontRight, frontLeft, backLeft, backRight);
-		left = new Joystick(1);
-		right = new Joystick(2);
+		leftDriverStick = new Joystick(1);
+		rightDriverStick = new Joystick(2);
 	}
 
 	void TeleopPeriodic()
 	{
-	
-		theDrive->TankDrive(left,right);
+
+		theDrive->TankDrive(leftDriverStick,rightDriverStick);
 		
 	}
 
