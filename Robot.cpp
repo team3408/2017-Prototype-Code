@@ -1,18 +1,19 @@
 #include "WPILib.h"
+#include <"CANTalon.h">
 
 class Robot: public IterativeRobot
 {
-private:
+public:
 
 	void RobotInit()
 	{
 		RobotDrive *theDrive;
-		Joystick *left, *right;
-		CANTalon *rearLeft, *frontLeft, *rearRight, *frontRight;
-		frontLeft = CANTalon(2);
-		frontRight = CANTalon(1);
-		backLeft = CANTalon(3);
-		backRight = CANTalon(4);
+		Joystick *leftDriverStick, *rightDriverStick;
+		CANTalon *frontLeft,*frontRight, *backRight ,*backLeft ;
+		frontLeft = new CanTalonSRX(2);//We forgot new
+		frontRight = new CanTalonSRX(1);
+		backLeft = new CanTalonSRX(3);
+		backRight = new CanTalonSRX(4);
 	}
 
 
@@ -30,14 +31,14 @@ private:
 	void TeleopInit()
 	{
 		theDrive = new RobotDrive(frontRight, frontLeft, backLeft, backRight);
-		left = new Joystick(1);
-		right = new Joystick(2);
+		leftDriverStick = new Joystick(1);
+		rightDriverStick = new Joystick(2);
 	}
 
 	void TeleopPeriodic()
 	{
-	
-		theDrive->Tank(left,right);
+
+		theDrive->TankDrive(leftDriverStick,rightDriverStick);
 		
 	}
 
