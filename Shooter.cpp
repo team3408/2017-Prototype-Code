@@ -9,7 +9,7 @@ private:
     JoystickButton * spinWheel
     CanTalonSRX * Talon5
     CanTalonSRX * Talon6
-    int spinWheel = JoystickButton(4);
+    int spinWheel = JoystickButton(8);
   }
 
   void AutonomousInit(){
