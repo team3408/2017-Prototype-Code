@@ -10,10 +10,10 @@ public:
 		RobotDrive *theDrive;
 		Joystick *leftDriverStick, *rightDriverStick;
 		CANTalon *frontLeft,*frontRight, *backRight ,*backLeft, ;
-		frontLeft = new CANTalonSRX(2);
-		frontRight = new CANTalonSRX(1);
-		backLeft = new CANTalonSRX(3);
-		backRight = new CANTalonSRX(4);
+		frontLeft = new CanTalonSRX(2);
+		frontRight = new CanTalonSRX(1);
+		backLeft = new CanTalonSRX(3);
+		backRight = new CanTalonSRX(4);
 	}
 
 
