@@ -13,7 +13,7 @@ private:
 	std::string autoSelected;
 	RobotDrive *RoboDrive;
 	Joystick *left, *right;
-	CanTalonSRX *rearLeft, *frontLeft, *rearRight, *frontRight; 
+	CanTalonSRX *rearLeft, *frontLeft, *rearRight, *frontRight;
 
 	void RobotInit()
 	{
@@ -21,10 +21,10 @@ private:
 		chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
 		chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
 		SmartDashboard::PutData("Auto Modes", chooser);
-		frontLeft = new CanTalonSRX(0);
-		frontRight = new CanTalonSRX(1);
-		rearLeft = new CanTalonSRX(2);
-		rearRight = new CanTalonSRX(3);
+		frontLeft = new CanTalonSRX();
+		frontRight = new CanTalonSRX();
+		rearLeft = new CanTalonSRX();
+		rearRight = new CanTalonSRX();
 
 
 	}
@@ -67,12 +67,8 @@ private:
 		right = new Joystick(2);
 		RoboDrive = new RobotDrive(frontLeft, rearLeft, frontRight, rearRight);
 	}
-	void TeleopPeriodic(){
-
-		frontLeft -> Set(0.2);
-		frontRight -> Set(0.2);
-		rearLeft -> Set(0.2);
-		rearRight ->Set(.2);
+	void TeleopPeriodic()
+	{
 		RoboDrive->TankDrive(left,right);
 	}
 
@@ -83,4 +79,3 @@ private:
 };
 
 START_ROBOT_CLASS(Robot)
-
