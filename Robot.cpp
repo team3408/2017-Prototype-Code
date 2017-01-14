@@ -3,17 +3,17 @@
 
 class Robot: public IterativeRobot
 {
-private:
+public:
 
 	void RobotInit()
 	{
 		RobotDrive *theDrive;
 		Joystick *leftDriverStick, *rightDriverStick;
 		CANTalon *frontLeft,*frontRight, *backRight ,*backLeft, ;
-		frontLeft = CANTalonSRX(2);
-		frontRight = CANTalonSRX(1);
-		backLeft = CANTalonSRX(3);
-		backRight = CANTalonSRX(4);
+		frontLeft = new CANTalonSRX(2);
+		frontRight = new CANTalonSRX(1);
+		backLeft = new CANTalonSRX(3);
+		backRight = new CANTalonSRX(4);
 	}
 
 
