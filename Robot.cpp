@@ -4,16 +4,18 @@
 class Robot: public IterativeRobot
 {
 public:
-
+	RobotDrive *theDrive;
+	Joystick *leftDriverStick, *rightDriverStick;
+	CANTalon *frontLeft,*frontRight, *backRight ,*backLeft ;
+	frontLeft = new CanTalonSRX(2);//We forgot new
+	frontRight = new CanTalonSRX(1);
+	backLeft = new CanTalonSRX(3);
+	backRight = new CanTalonSRX(4);
+	LiveWindow *lw;
+	
 	void RobotInit()
 	{
-		RobotDrive *theDrive;
-		Joystick *leftDriverStick, *rightDriverStick;
-		CANTalon *frontLeft,*frontRight, *backRight ,*backLeft ;
-		frontLeft = new CanTalonSRX(2);//We forgot new
-		frontRight = new CanTalonSRX(1);
-		backLeft = new CanTalonSRX(3);
-		backRight = new CanTalonSRX(4);
+		lw = LiveWindow::GetInstance();
 	}
 
 
