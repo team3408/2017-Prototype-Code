@@ -1,4 +1,5 @@
 #include "WPILib.h"
+#include <"CANTalon.h">
 
 class Robot: public IterativeRobot
 {
@@ -8,11 +9,11 @@ private:
 	{
 		RobotDrive *theDrive;
 		Joystick *leftDriverStick, *rightDriverStick;
-		CANTalon *rearLeft, *frontLeft, *rearRight, *frontRight;
-		frontLeft = CANTalon(2);
-		frontRight = CANTalon(1);
-		backLeft = CANTalon(3);
-		backRight = CANTalon(4);
+		CANTalon *frontLeft,*frontRight, *backRight ,*backLeft, ;
+		frontLeft = CANTalonSRX(2);
+		frontRight = CANTalonSRX(1);
+		backLeft = CANTalonSRX(3);
+		backRight = CANTalonSRX(4);
 	}
 
 
