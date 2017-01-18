@@ -65,11 +65,18 @@ private:
 	{
 		left = new Joystick(1);
 		right = new Joystick(2);
-		RoboDrive = new RobotDrive(frontLeft, rearLeft, frontRight, rearRight);
+		double MotorSpeed = .2;
+		
 	}
 	void TeleopPeriodic()
 	{
-		RoboDrive->TankDrive(left,right);
+		left -> GetRawAxis(1);
+		left -> GetRawAxis(2);
+		frontLeft -> Set(MotorSpeed);
+		frontRight -> Set(MotorSpeed);
+		rearLeft -> Set(MotorSpeed);
+		rearRight -> Set(MotorSpeed);
+		
 	}
 
 	void TestPeriodic()
