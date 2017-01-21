@@ -1,5 +1,4 @@
 #include "WPILib.h"
-#include "CanTalon.h"
 
 class Robot: public IterativeRobot
 {
@@ -13,9 +12,9 @@ private:
 	std::string autoSelected;
 	RobotDrive *RoboDrive;
 	Joystick *stick1, *stick2;
-	CanTalonSRX *rearLeft, *frontLeft, *rearRight, *frontRight;
-	float leftWheels;
-	float rightWheels;
+	Spark *rearLeft, *frontLeft, *rearRight, *frontRight;
+	double leftWheels;
+	double rightWheels;
 
 	void RobotInit()
 	{
@@ -23,10 +22,12 @@ private:
 		chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
 		chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
 		SmartDashboard::PutData("Auto Modes", chooser);
-		frontLeft = new CanTalonSRX();
-		frontRight = new CanTalonSRX();
-		rearLeft = new CanTalonSRX();
-		rearRight = new CanTalonSRX();
+		frontLeft = new Spark(0);
+		frontRight = new Spark(1);
+		rearLeft = new Spark(2);
+		rearRight = new Spark(3);
+		stick1 = new Joystick(1);
+		stick2 = new Joystick(2);
 
 
 	}
@@ -65,8 +66,7 @@ private:
 
 	void TeleopInit()
 	{
-		stick1 = new Joystick(1);
-		stick2 = new Joystick(2);
+		
 		
 		
 	}
