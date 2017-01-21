@@ -42,7 +42,7 @@ private:
 	 * If using the SendableChooser make sure to add them to the chooser code above as well.
 	 */
 	void AutonomousInit()
-	{
+	{/*
 		autoSelected = *((std::string*)chooser->GetSelected());
 		//std::string autoSelected = SmartDashboard::GetString("Auto Selector", autoNameDefault);
 		std::cout << "Auto selected: " << autoSelected << std::endl;
@@ -51,16 +51,16 @@ private:
 			//Custom Auto goes here
 		} else {
 			//Default Auto goes here
-		}
+		}*/
 	}
 
 	void AutonomousPeriodic()
-	{
+	{/*
 		if(autoSelected == autoNameCustom){
 			//Custom Auto goes here
 		} else {
 			//Default Auto goes here
-		}
+		}*/
 	}
 
 	void TeleopInit()
@@ -72,8 +72,8 @@ private:
 	}
 	void TeleopPeriodic()
 	{
-		leftWheels -> GetRawAxis(2);
-		rightWheels -> GetRawAxis(4);
+		leftWheels = stick1 -> GetRawAxis(2);
+		rightWheels = stick1 -> GetRawAxis(4);
 		frontLeft -> Set(leftWheels);
 		frontRight -> Set(rightWheels);
 		rearLeft -> Set(leftWheels);
