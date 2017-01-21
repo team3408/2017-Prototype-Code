@@ -12,7 +12,7 @@ private:
 	const std::string autoNameCustom = "My Auto";
 	std::string autoSelected;
 	RobotDrive *RoboDrive;
-	Joystick *left, *right;
+	Joystick *stick1, *stick2;
 	CanTalonSRX *rearLeft, *frontLeft, *rearRight, *frontRight;
 
 	void RobotInit()
@@ -63,15 +63,15 @@ private:
 
 	void TeleopInit()
 	{
-		left = new Joystick(1);
-		right = new Joystick(2);
+		stick1 = new Joystick(1);
+		stick2 = new Joystick(2);
 		double MotorSpeed = .2;
 		
 	}
 	void TeleopPeriodic()
 	{
-		left -> GetRawAxis(1);
-		left -> GetRawAxis(2);
+		stick1 -> GetRawAxis(2);
+		stick1 -> GetRawAxis(4);
 		frontLeft -> Set(MotorSpeed);
 		frontRight -> Set(MotorSpeed);
 		rearLeft -> Set(MotorSpeed);
