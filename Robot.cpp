@@ -14,6 +14,9 @@ private:
 	RobotDrive *RoboDrive;
 	Joystick *stick1, *stick2;
 	CanTalonSRX *rearLeft, *frontLeft, *rearRight, *frontRight;
+	double MotorSpeed = .2;
+	float leftWheels;
+	float rightWheels;
 
 	void RobotInit()
 	{
@@ -65,17 +68,17 @@ private:
 	{
 		stick1 = new Joystick(1);
 		stick2 = new Joystick(2);
-		double MotorSpeed = .2;
+		
 		
 	}
 	void TeleopPeriodic()
 	{
 		stick1 -> GetRawAxis(2);
 		stick1 -> GetRawAxis(4);
-		frontLeft -> Set(MotorSpeed);
-		frontRight -> Set(MotorSpeed);
-		rearLeft -> Set(MotorSpeed);
-		rearRight -> Set(MotorSpeed);
+		leftWheels = frontLeft -> Set(MotorSpeed);
+		rightWheels = frontRight -> Set(MotorSpeed);
+		leftWheels = rearLeft -> Set(MotorSpeed);
+		rightWheels = rearRight -> Set(MotorSpeed);
 		
 	}
 
