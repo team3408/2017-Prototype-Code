@@ -6,6 +6,7 @@
 //Output the motor value
 //Encoder Speed output
 //Test with talon after sparks move
+/*
 bool shoot10;
 bool shoot20;
 bool shoot30;
@@ -15,8 +16,9 @@ bool shoot60;
 bool shoot70;
 bool shoot80;
 bool shoot90;
+*/
 
-JoystickButton*spinWheel;
+Joystick*spinWheel;
 Spark*Spark3;
 double sparkPower = 0.5;
 
