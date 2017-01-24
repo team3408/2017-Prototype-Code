@@ -6,25 +6,26 @@
 //Output the motor value
 //Encoder Speed output
 //Test with talon after sparks move
-public bool shoot10;
-public bool shoot20;
-public bool shoot30;
-public bool shoot40;
-public bool shoot50;
-public bool shoot60;
-public bool shoot70;
-public bool shoot80;
-public bool shoot90;
+bool shoot10;
+bool shoot20;
+bool shoot30;
+bool shoot40;
+bool shoot50;
+bool shoot60;
+bool shoot70;
+bool shoot80;
+bool shoot90;
+
+JoystickButton*spinWheel;
+Spark*Spark3;
+double sparkPower = 0.5;
 
 class Robot: public IterativeRobot{
 
 private:
 
   void RobotInit(){
-    JoystickButton * spinWheel
-    CanTalonSRX * Talon5
-    CanTalonSRX * Talon6
-    spinWheel = new JoystickButton(8);
+    spinWheel = Stick2 -> GetRawButton(7);
   }
 
   void AutonomousInit(){
@@ -32,18 +33,16 @@ private:
   }
 
   void TeleopInit(){
-    void Shoot(){
-      Talon5 = new CanTalonSRX(5);
-      Talon6 = new CanTalonSRX(6);
-      float talonPower = 0.5;
-      Talon5->Set(talonPower);
-      Talon6->Set(talonPower);
-    }
-
+      Spark3 = new Spark(3);
   }
 
   void TestPeriodic(){
-    spinWheel->WhileHeld(Shoot());
+	  if (spinWheel) {
+		  Spark3->Set(sparkPower);
+	  }
+	  else {
+		  Spark3->Set(0);
+	  }
   }
 };
 
