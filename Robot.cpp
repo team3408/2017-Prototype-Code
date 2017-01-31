@@ -25,12 +25,19 @@ private:
 		//chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
 		///chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
 		//SmartDashboard::PutData("Auto Modes", chooser);
+
+		// Declaring sparks for drive code
 		frontLeft = new Spark(0);
-		frontRight = new Spark(1);
-		rearLeft = new Spark(2);
-		rearRight = new Spark(3);
-		stick1 = new Joystick(0);
-		stick2 = new Joystick(1);
+		rearLeft = new Spark(1);
+		
+		frontRight = new Spark(3);
+		rearRight = new Spark(2);
+
+		// Declaring controllers
+		stick1 = new Joystick(0); // Port zero
+		stick2 = new Joystick(1); // Port one
+
+		// Declaring sparks for shooter
 		shooter = new Spark(4);
 
 
@@ -60,17 +67,18 @@ private:
 	}
 
 	void AutonomousPeriodic()
-	{/*
+	{
 		if(autoSelected == autoNameCustom){
 			//Custom Auto goes here
 		} else {
 			//Default Auto goes here
-		}*/
+		}
 	}
 
 	void TeleopInit()
 	{
-		frontRight->SetInverted(true);
+		//Inverting motors for the left side for forward drive
+		rearLeft->SetInverted(true);
 		frontLeft->SetInverted(true);
 
 
@@ -78,13 +86,17 @@ private:
 	}
 	void TeleopPeriodic()
 	{
+		//DRIVE CODE
 		leftWheels = stick1 -> GetRawAxis(1); //leftwheels doesnt work
 		rightWheels = stick1 -> GetRawAxis(5);
-		//spinWheel = stick1 -> GetRawButton(11);
-		frontLeft -> Set(rightWheels);
+		frontLeft -> Set(leftWheels);
 		frontRight -> Set(rightWheels);
-		rearLeft -> Set(rightWheels);
+		rearLeft -> Set(leftWheels);
 		rearRight -> Set(rightWheels);
+
+		//SHOOTER CODE
+		//spinWheel = stick1 -> GetRawButton(11);
+		//shooter -> Set(0.2); //testing shooter
 
 		/*
 		if (spinWheel)
