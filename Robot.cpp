@@ -6,28 +6,33 @@ class Robot: public IterativeRobot
 
 private:
 	LiveWindow *lw = LiveWindow::GetInstance();
-	SendableChooser *chooser;
+	//SendableChooser *chooser;
 	const std::string autoNameDefault = "Default";
 	const std::string autoNameCustom = "My Auto";
 	std::string autoSelected;
 	RobotDrive *RoboDrive;
 	Joystick *stick1, *stick2;
-	Spark *rearLeft, *frontLeft, *rearRight, *frontRight;
+	Spark *rearLeft, *frontLeft, *rearRight, *frontRight, *shooter;
 	double leftWheels;
 	double rightWheels;
+	bool spinWheel;
+	double sparkPower = 0.5;
+
 
 	void RobotInit()
 	{
-		chooser = new SendableChooser();
-		chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
-		chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
-		SmartDashboard::PutData("Auto Modes", chooser);
+		//chooser = new SendableChooser();
+		//chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
+		///chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
+		//SmartDashboard::PutData("Auto Modes", chooser);
 		frontLeft = new Spark(0);
 		frontRight = new Spark(1);
 		rearLeft = new Spark(2);
 		rearRight = new Spark(3);
-		stick1 = new Joystick(1);
-		stick2 = new Joystick(2);
+		stick1 = new Joystick(0);
+		stick2 = new Joystick(1);
+		shooter = new Spark(4);
+
 
 
 	}
@@ -47,7 +52,6 @@ private:
 		autoSelected = *((std::string*)chooser->GetSelected());
 		//std::string autoSelected = SmartDashboard::GetString("Auto Selector", autoNameDefault);
 		std::cout << "Auto selected: " << autoSelected << std::endl;
-
 		if(autoSelected == autoNameCustom){
 			//Custom Auto goes here
 		} else {
@@ -66,19 +70,33 @@ private:
 
 	void TeleopInit()
 	{
-		
-		
-		
+		frontRight->SetInverted(true);
+		frontLeft->SetInverted(true);
+
+
+
 	}
 	void TeleopPeriodic()
 	{
-		leftWheels = stick1 -> GetRawAxis(2);
-		rightWheels = stick1 -> GetRawAxis(4);
-		frontLeft -> Set(leftWheels);
+		leftWheels = stick1 -> GetRawAxis(1); //leftwheels doesnt work
+		rightWheels = stick1 -> GetRawAxis(5);
+		//spinWheel = stick1 -> GetRawButton(11);
+		frontLeft -> Set(rightWheels);
 		frontRight -> Set(rightWheels);
-		rearLeft -> Set(leftWheels);
+		rearLeft -> Set(rightWheels);
 		rearRight -> Set(rightWheels);
-		
+
+		/*
+		if (spinWheel)
+		{
+			shooter->Set(sparkPower);
+		}
+		else
+		{
+			shooter->Set(0);
+		}
+		*/
+
 	}
 
 	void TestPeriodic()
