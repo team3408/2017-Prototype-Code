@@ -88,11 +88,21 @@ private:
 
 	void AutonomousPeriodic()
 	{
+		if(autotimer->Get() > 5)
+		{
+			rearLeft -> Set(0);
+			rearRight -> Set(0);
+			frontLeft -> Set(0);
+			frontRight -> Set(0);
+		}
 
-		frontRight->Set(0.5);
-		frontLeft->Set(0.5);
-		rearLeft->Set(0.5);
-		rearRight->Set(0.5);
+		else
+		{
+			rearLeft -> Set(0.5);
+			rearRight -> Set(0.5);
+			frontRight -> Set(0.5);
+			frontLeft -> Set(0.5);
+		}
 
 		/*
 		if(autotimer > stopTime)
