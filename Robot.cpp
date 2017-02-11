@@ -40,7 +40,7 @@ private:
 
 	RobotDrive *myDrive;
 
-	CameraServer *camera;
+	//CameraServer *camera;
 
 	void RobotInit()
 	{
@@ -82,11 +82,11 @@ private:
 		//lw->AddActuator("spark4", "Shooter", shooter);
 
 		myDrive = new RobotDrive(frontLeft, rearLeft, rearRight, frontRight);
-		
-		camera = new CameraServer();
+/*
+ *
 		camera->AddAxisCamera("Axis Camera");
-		camera->StartAutomaticCapture("Axis Camera", 0 /*device number of camera interface*/);
-
+		camera->StartAutomaticCapture("Axis Camera", 0);
+*/
 	}
 
 
@@ -151,7 +151,7 @@ private:
 			frontLeft -> Set(0.5);
 		}
 */
-	if(autotimer->HasPeriodPassed(15))
+	if(autotimer->HasPeriodPassed(3.5))
 	{
 		myDrive->ArcadeDrive(0.0,0.0);
 		done = true;
@@ -175,8 +175,8 @@ private:
 		// Testing SmartDashboard
 		//totalTime -> Start();
 		//SmartDashboard::PutNumber("Run Time", totalTime->runTimer());
-		rearLeft->SetInverted(true);
-		frontLeft->SetInverted(true);
+		rearRight->SetInverted(true);
+		frontRight->SetInverted(true);
 		//done = false;
 
 
@@ -188,10 +188,10 @@ private:
 		//DRIVE CODE
 		leftWheels = stick1 -> GetRawAxis(1); //leftwheels doesnt work
 		rightWheels = stick1 -> GetRawAxis(5);
-		frontLeft -> Set(leftWheels);
-		frontRight -> Set(rightWheels);
-		rearLeft -> Set(leftWheels);
-		rearRight -> Set(rightWheels);
+		frontLeft -> Set(rightWheels);
+		frontRight -> Set(leftWheels);
+		rearLeft -> Set(rightWheels);
+		rearRight -> Set(leftWheels);
 
 		//SHOOTER CODE
 		spinWheel = stick1 -> GetRawButton(1);
@@ -203,7 +203,7 @@ private:
 
 		if (spinWheel)
 		{
-			shooter->Set(-0.8);
+			shooter->Set(-0.7);
 		}
 		else
 		{
