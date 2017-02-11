@@ -1,5 +1,7 @@
 #include "WPILib.h"
 #include <Timer.h>
+#include "SmartDashboard/SmartDashboard.h"
+
 
 class Robot: public IterativeRobot
 {
@@ -11,19 +13,34 @@ private:
 	const std::string autoNameDefault = "Default";
 	const std::string autoNameCustom = "My Auto";
 	std::string autoSelected;
+
+	// Declaring variables and calling instances of classes
 	RobotDrive *RoboDrive;
 	Joystick *stick1, *stick2;
 	Spark *rearLeft, *frontLeft, *rearRight, *frontRight, *shooter, *climber;
 	double leftWheels;
 	double rightWheels;
 	bool spinWheel;
-	bool climberSpin;
+	bool climberForwardSpin;
+	bool climberReverseSpin;
+	double Kp= 0.1;
+	bool done = false;
+
+	AnalogGyro *gyro;
 
 	//double sparkPower = 0.5;
 
 	Timer *autotimer;
+	//Timer *totalTime;
 	double stopTime;
 
+	// SmartDashboard
+	//SmartDashboard *runTimer;
+	double angleMeasurement;
+
+	RobotDrive *myDrive;
+
+	CameraServer *camera;
 
 	void RobotInit()
 	{
@@ -54,10 +71,21 @@ private:
 		autotimer = new Timer();
 		stopTime = 5;
 
-		// Inverting motors
-		rearLeft->SetInverted(true);
-		frontLeft->SetInverted(true);
+		gyro = new AnalogGyro(0);
 
+
+
+		// Inverting motors
+
+
+		// Encoder code
+		//lw->AddActuator("spark4", "Shooter", shooter);
+
+		myDrive = new RobotDrive(frontLeft, rearLeft, rearRight, frontRight);
+		
+		camera = new CameraServer();
+		camera->AddAxisCamera("Axis Camera");
+		camera->StartAutomaticCapture("Axis Camera", 0 /*device number of camera interface*/);
 
 	}
 
@@ -73,7 +101,22 @@ private:
 	 */
 	void AutonomousInit()
 	{
+
+		gyro->Reset();
+		gyro->Calibrate();
+		autotimer->Reset();
+		done = false;
+
+		rearLeft->SetInverted(true);
+		frontLeft->SetInverted(true);
+		angleMeasurement = gyro->GetAngle();
+		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
+		Wait(1);
 		autotimer->Start();
+
+		//frontLeft->SetInverted(true);
+		//rearLeft->SetInverted(true);
+
 
 		/*
 		autoSelected = *((std::string*)chooser->GetSelected());
@@ -88,6 +131,10 @@ private:
 
 	void AutonomousPeriodic()
 	{
+		angleMeasurement = gyro->GetAngle();
+		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
+
+/*
 		if(autotimer->Get() > 5)
 		{
 			rearLeft -> Set(0);
@@ -103,36 +150,41 @@ private:
 			frontRight -> Set(0.5);
 			frontLeft -> Set(0.5);
 		}
+*/
+	if(autotimer->HasPeriodPassed(15))
+	{
+		myDrive->ArcadeDrive(0.0,0.0);
+		done = true;
+	}
+	else if(done)
+	{
+		myDrive->ArcadeDrive(0.0,0.0);
+	}
+	else
+	{
+		myDrive->ArcadeDrive(Kp*angleMeasurement, 0.65);
+	}
 
-		/*
-		if(autotimer > stopTime)
-		{
-			frontRight->Set(0.5);
-			frontLeft->Set(0.5);
-			rearLeft->Set(0.5);
-			rearRight->Set(0.5);
-		}
-
-		else
-		{
-			frontRight->Set(0);
-			frontLeft->Set(0);
-			rearLeft->Set(0);
-			rearRight->Set(0);
-		}
-		*/
 
 	}
 
 	void TeleopInit()
 	{
-		//Inverting motors for the left side for forward drive
-
+		gyro->Reset();
+		gyro->Calibrate();
+		// Testing SmartDashboard
+		//totalTime -> Start();
+		//SmartDashboard::PutNumber("Run Time", totalTime->runTimer());
+		rearLeft->SetInverted(true);
+		frontLeft->SetInverted(true);
+		//done = false;
 
 
 	}
 	void TeleopPeriodic()
 	{
+		angleMeasurement = gyro->GetAngle();
+		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
 		//DRIVE CODE
 		leftWheels = stick1 -> GetRawAxis(1); //leftwheels doesnt work
 		rightWheels = stick1 -> GetRawAxis(5);
@@ -145,7 +197,9 @@ private:
 		spinWheel = stick1 -> GetRawButton(1);
 		//shooter -> Set(0.8); //testing shooter
 
-		climberSpin = stick1 -> GetRawButton(2);
+		climberForwardSpin = stick1 -> GetRawButton(2);
+
+		climberReverseSpin = stick1 -> GetRawButton(3);
 
 		if (spinWheel)
 		{
@@ -156,7 +210,7 @@ private:
 			shooter->Set(0);
 		}
 
-		if (climberSpin)
+		if (climberForwardSpin)
 		{
 			climber->Set(1);
 		}
@@ -165,7 +219,22 @@ private:
 			climber->Set(0);
 		}
 
+		if (climberReverseSpin)
+		{
+			climber->Set(-1);
+		}
+		else
+		{
+			climber->Set(0);
+		}
 
+
+/*
+		leftWheels = stick1 -> GetRawAxis(1);
+		rightWheels = stick1 -> GetRawAxis(5);
+
+
+		myDrive->ArcadeDrive(-leftWheels,rightWheels);*/
 	}
 
 	void TestPeriodic()
