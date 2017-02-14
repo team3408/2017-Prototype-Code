@@ -2,22 +2,28 @@
 #include <Timer.h>
 #include "SmartDashboard/SmartDashboard.h"
 
-
 class Robot: public IterativeRobot
 {
 
 
 private:
+	/*
 	LiveWindow *lw = LiveWindow::GetInstance();
-	//SendableChooser *chooser;
+
+	std::unique_ptr<frc::Command> autonomousCommand;
+	frc::SendableChooser<frc::Command*> chooser;
+
+	SendableChooser *Chooser;
 	const std::string autoNameDefault = "Default";
 	const std::string autoNameCustom = "My Auto";
 	std::string autoSelected;
+	*/
 
 	// Declaring variables and calling instances of classes
 	RobotDrive *RoboDrive;
 	Joystick *stick1, *stick2;
 	Spark *rearLeft, *frontLeft, *rearRight, *frontRight, *shooter, *climber;
+	Encoder *robotDistance;
 	double leftWheels;
 	double rightWheels;
 	bool spinWheel;
@@ -25,6 +31,9 @@ private:
 	bool climberReverseSpin;
 	double Kp= 0.1;
 	bool done = false;
+
+	double revolutions;
+	double pulse;
 
 	AnalogGyro *gyro;
 
@@ -44,10 +53,12 @@ private:
 
 	void RobotInit()
 	{
-		//chooser = new SendableChooser();
-		//chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
-		///chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
-		//SmartDashboard::PutData("Auto Modes", chooser);
+		/*
+		chooser = new <SendableChooser>SendableChooser();
+		chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
+		chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
+		SmartDashboard::PutData("Auto Modes", chooser);
+		*/
 
 		//Declaring sparks for drive code
 		frontLeft = new Spark(0);
@@ -73,7 +84,7 @@ private:
 
 		gyro = new AnalogGyro(0);
 
-
+		//chooser = new SendableChooser();
 
 		// Inverting motors
 
@@ -83,8 +94,8 @@ private:
 
 		myDrive = new RobotDrive(frontLeft, rearLeft, rearRight, frontRight);
 /*
- *
-		camera->AddAxisCamera("Axis Camera");
+ 	 	camera = new CameraServer();
+ 	 	camera->AddAxisCamera("Axis Camera");
 		camera->StartAutomaticCapture("Axis Camera", 0);
 */
 	}
@@ -110,6 +121,7 @@ private:
 		rearLeft->SetInverted(true);
 		frontLeft->SetInverted(true);
 		angleMeasurement = gyro->GetAngle();
+		angleMeasurement = angleMeasurement/360;
 		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
 		Wait(1);
 		autotimer->Start();
@@ -120,13 +132,14 @@ private:
 
 		/*
 		autoSelected = *((std::string*)chooser->GetSelected());
-		//std::string autoSelected = SmartDashboard::GetString("Auto Selector", autoNameDefault);
+		std::string autoSelected = SmartDashboard::GetString("Auto Selector", autoNameDefault);
 		std::cout << "Auto selected: " << autoSelected << std::endl;
 		if(autoSelected == autoNameCustom){
 			//Custom Auto goes here
 		} else {
 			//Default Auto goes here
-		}*/
+		}
+		*/
 	}
 
 	void AutonomousPeriodic()
@@ -162,12 +175,44 @@ private:
 	}
 	else
 	{
-		myDrive->ArcadeDrive(Kp*angleMeasurement, 0.65);
+		myDrive->ArcadeDrive(angleMeasurement, 0.65);
 	}
 
-
+	//Right-Side Code
+	myDrive -> ArcadeDrive(0.0,0.5);
+	revolutions = robotDistance -> GetDistance();
+	if (revolutions >= 4.2)
+	{
+		myDrive->ArcadeDrive(-30,0.0);
+		robotDistance->Reset();
+		Wait(0.5);
+		myDrive->ArcadeDrive(-30,0.5);
+		revolutions = robotDistance -> GetDistance();
+		if (revolutions > 4.03)
+		{
+			myDrive->ArcadeDrive(-30,0.0);
+		}
 	}
 
+	//Left-Side Code
+		myDrive -> ArcadeDrive(0.0,0.5);
+		revolutions = robotDistance -> GetDistance();
+		if (revolutions >= 4.2)
+		{
+			myDrive->ArcadeDrive(30,0.0);
+			robotDistance->Reset();
+			Wait(500);
+			myDrive->ArcadeDrive(30,0.5);
+			revolutions = robotDistance -> GetDistance();
+			if (revolutions > 4.03)
+			{
+				myDrive->ArcadeDrive(30,0.0);
+			}
+
+
+		}
+
+	}
 	void TeleopInit()
 	{
 		gyro->Reset();
@@ -239,7 +284,7 @@ private:
 
 	void TestPeriodic()
 	{
-		lw->Run();
+		//lw->Run();
 	}
 };
 
