@@ -1,6 +1,8 @@
 #include "WPILib.h"
 #include <Timer.h>
 #include "SmartDashboard/SmartDashboard.h"
+#include <string>
+using namespace std;
 
 class Robot: public IterativeRobot
 {
@@ -19,53 +21,60 @@ private:
 	std::string autoSelected;
 	*/
 
-	// Declaring variables and calling instances of classes
-	RobotDrive *RoboDrive;
+	// Conrtollers and Sparks
 	Joystick *stick1, *stick2;
 	Spark *rearLeft, *frontLeft, *rearRight, *frontRight, *shooter, *climber;
 	Encoder *robotDistance;
 	double leftWheels;
 	double rightWheels;
+
+	// Shooter's ON/OFF
 	bool spinWheel;
+
+	// Climber
 	bool climberForwardSpin;
 	bool climberReverseSpin;
+
+	//Adjustment constant for gyro
 	double Kp= 0.1;
+	//State of Auto code
 	bool done = false;
-
+	//revolution preformed by the gyro
 	double revolutions;
-	double pulse;
 
+	//Enables monitoring of angle
 	AnalogGyro *gyro;
 
-	//double sparkPower = 0.5;
-
+	// Timer
 	Timer *autotimer;
-	//Timer *totalTime;
 	double stopTime;
 
-	// SmartDashboard
-	//SmartDashboard *runTimer;
+	// Storing values from gyro
 	double angleMeasurement;
 
+	// Auto drive class instance
 	RobotDrive *myDrive;
 
-	//CameraServer *camera;
+	// Camera Code
+	// CameraServer *camera;
+
+	// String auto chooser code
+	Command *autoChooser;
+	string Left = "l";
+	string Right = "r";
+	string Center = "c";
+	string humanInput;
+
 
 	void RobotInit()
 	{
-		/*
-		chooser = new <SendableChooser>SendableChooser();
-		chooser->AddDefault(autoNameDefault, (void*)&autoNameDefault);
-		chooser->AddObject(autoNameCustom, (void*)&autoNameCustom);
-		SmartDashboard::PutData("Auto Modes", chooser);
-		*/
 
 		//Declaring sparks for drive code
 		frontLeft = new Spark(0);
 		rearLeft = new Spark(1);
 
-		frontRight = new Spark(3);
 		rearRight = new Spark(2);
+		frontRight = new Spark(3);
 
 		// Declaring sparks for shooter
 		shooter = new Spark(4);
@@ -84,23 +93,17 @@ private:
 
 		gyro = new AnalogGyro(0);
 
-		//chooser = new SendableChooser();
-
-		// Inverting motors
-
-
-		// Encoder code
-		//lw->AddActuator("spark4", "Shooter", shooter);
-
+		//Sets Up auto drive
 		myDrive = new RobotDrive(frontLeft, rearLeft, rearRight, frontRight);
-/*
- 	 	camera = new CameraServer();
- 	 	camera->AddAxisCamera("Axis Camera");
-		camera->StartAutomaticCapture("Axis Camera", 0);
-*/
+
+		//Asks the driver which auto mode they would like to run
+		cout << "Which auto sir or madam do you want to do?";
+		cin >> humanInput;//input option are r,l,c
+
+		///<inversion code>
+		//rearLeft->SetInverted(true);
+		//frontLeft->SetInverted(true);
 	}
-
-
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select between different autonomous modes
 	 * using the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW
@@ -112,58 +115,114 @@ private:
 	 */
 	void AutonomousInit()
 	{
-
+		//sets gyro up
 		gyro->Reset();
 		gyro->Calibrate();
-		autotimer->Reset();
+		//resets angle measurement to 0
+		angleMeasurement = gyro->GetAngle();
+		//angleMeasurement = angleMeasurement/360;
+		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
+
+		// Setting/Resetting encoder
+		revolutions = 0;
+
+		//ensure auto mode is ready to be run
 		done = false;
 
-		rearLeft->SetInverted(true);
-		frontLeft->SetInverted(true);
-		angleMeasurement = gyro->GetAngle();
-		angleMeasurement = angleMeasurement/360;
-		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
 		Wait(1);
+		//begins timing autonomous
+		autotimer->Reset();
 		autotimer->Start();
-
-		//frontLeft->SetInverted(true);
-		//rearLeft->SetInverted(true);
-
-
-		/*
-		autoSelected = *((std::string*)chooser->GetSelected());
-		std::string autoSelected = SmartDashboard::GetString("Auto Selector", autoNameDefault);
-		std::cout << "Auto selected: " << autoSelected << std::endl;
-		if(autoSelected == autoNameCustom){
-			//Custom Auto goes here
-		} else {
-			//Default Auto goes here
-		}
-		*/
 	}
 
 	void AutonomousPeriodic()
 	{
-		angleMeasurement = gyro->GetAngle();
-		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
-
-/*
-		if(autotimer->Get() > 5)
+		//runs left side autonomous
+		if(humanInput == "l","L")
 		{
-			rearLeft -> Set(0);
-			rearRight -> Set(0);
-			frontLeft -> Set(0);
-			frontRight -> Set(0);
+			// Encoder gets value
+			revolutions = robotDistance -> GetDistance();
+
+			if (revolutions < 4.2)
+			{
+				//drives at half speed straight forward
+				myDrive -> ArcadeDrive(0.0,0.5);
+			}
+
+			else if (revolutions >= 4.2 && revolutions <= 8.23)
+			{
+				//turns 30 degrees right
+				myDrive->ArcadeDrive(30,0.0);
+				//waits .5 secoonds
+				Wait(0.5);
+				//drives at 30 degrees at half speed
+				myDrive->ArcadeDrive(30,0.5);
+				//checks rotations
+				revolutions = robotDistance -> GetDistance();
+			}
+
+			else
+			{
+				//stops robot at 8.23 total revolutions
+				myDrive->ArcadeDrive(30,0.0);
+			}
+		}
+		//runs the right side of autonomous
+		else if(humanInput == "r", "R")
+		{
+			// Encoder gets value
+			revolutions = robotDistance -> GetDistance();
+
+			if (revolutions < 4.2)
+			{
+				//drives at half speed straight forward
+				myDrive -> ArcadeDrive(0.0,0.5);
+			}
+
+			else if (revolutions >= 4.2 && revolutions <= 8.23)
+			{
+				//turns -30 (330) degrees right
+				myDrive->ArcadeDrive(-30,0.0);
+				//waits .5 secoonds
+				Wait(0.5);
+				//drives at -30 (330) degrees at half speed
+				myDrive->ArcadeDrive(-30,0.5);
+				//checks rotations
+				revolutions = robotDistance -> GetDistance();
+			}
+
+			else
+			{
+				//stops robot at 8.23 total revolutions
+				myDrive->ArcadeDrive(30,0.0);
+			}
 		}
 
 		else
-		{
-			rearLeft -> Set(0.5);
-			rearRight -> Set(0.5);
-			frontRight -> Set(0.5);
-			frontLeft -> Set(0.5);
-		}
-*/
+			{
+				// HasPeriodPassed returns true once so we need an extra if.
+				if(autotimer->HasPeriodPassed(3.5))
+				{
+					myDrive->ArcadeDrive(0.0,0.0);
+					// Setting variable so we can test again
+					done = true;
+				}
+				else if(done)
+				{
+					myDrive->ArcadeDrive(0.0,0.0);
+				}
+				else
+				{
+					//myDrive->ArcadeDrive(angleMeasurement, 0.65);
+					myDrive->ArcadeDrive(0, 0.65);
+				}
+			}
+		angleMeasurement = gyro->GetAngle();
+		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
+
+
+/*
+
 	if(autotimer->HasPeriodPassed(3.5))
 	{
 		myDrive->ArcadeDrive(0.0,0.0);
@@ -211,25 +270,17 @@ private:
 
 
 		}
+*/
 
 	}
 	void TeleopInit()
 	{
-		gyro->Reset();
-		gyro->Calibrate();
-		// Testing SmartDashboard
-		//totalTime -> Start();
-		//SmartDashboard::PutNumber("Run Time", totalTime->runTimer());
-		rearRight->SetInverted(true);
-		frontRight->SetInverted(true);
-		//done = false;
-
 
 	}
 	void TeleopPeriodic()
 	{
-		angleMeasurement = gyro->GetAngle();
-		SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
+		//angleMeasurement = gyro->GetAngle();
+		//SmartDashboard::PutNumber("Gyro Angle", angleMeasurement);
 		//DRIVE CODE
 		leftWheels = stick1 -> GetRawAxis(1); //leftwheels doesnt work
 		rightWheels = stick1 -> GetRawAxis(5);
@@ -239,38 +290,33 @@ private:
 		rearRight -> Set(leftWheels);
 
 		//SHOOTER CODE
-		spinWheel = stick1 -> GetRawButton(1);
-		//shooter -> Set(0.8); //testing shooter
-
-		climberForwardSpin = stick1 -> GetRawButton(2);
-
-		climberReverseSpin = stick1 -> GetRawButton(3);
+		spinWheel = stick1 -> GetRawButton(1);//Assigned to A button
 
 		if (spinWheel)
 		{
-			shooter->Set(-0.7);
+			shooter->Set(-0.7);// 70% power backwards(motor was mounted backwards)
 		}
 		else
 		{
-			shooter->Set(0);
+			shooter->Set(0);// 0 Power
 		}
+
+		//Climber Code
+		climberForwardSpin = stick1 -> GetRawButton(2);//Assigned to B button
+
+		climberReverseSpin = stick1 -> GetRawButton(3);//Assigned to X button
 
 		if (climberForwardSpin)
-		{
-			climber->Set(1);
+		{					//if B button pressed
+			climber->Set(1);//Climber gets 100% power
+		}
+		else if (climberReverseSpin)
+		{					 //if X button pressed
+			climber->Set(-1);//Climber gets 100% power backwards
 		}
 		else
 		{
-			climber->Set(0);
-		}
-
-		if (climberReverseSpin)
-		{
-			climber->Set(-1);
-		}
-		else
-		{
-			climber->Set(0);
+			climber->Set(0);//Otherwise climber gets no power
 		}
 
 
@@ -284,7 +330,6 @@ private:
 
 	void TestPeriodic()
 	{
-		//lw->Run();
 	}
 };
 
